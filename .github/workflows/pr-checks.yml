@@ -1,0 +1,72 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run linter
+        run: npm run lint
+        continue-on-error: false
+      
+      - name: Type check
+        run: npx tsc --noEmit
+        continue-on-error: false
+      
+      - name: Build check
+        run: npm run build
+        env:
+          NODE_ENV: production
+        continue-on-error: false
+      
+      - name: Check for console.logs
+        run: |
+          if grep -r "console\\.log" src/ --exclude-dir=node_modules --exclude-dir=dist; then
+            echo "❌ Found console.log statements. Please remove them."
+            exit 1
+          else
+            echo "✅ No console.log statements found"
+          fi
+        continue-on-error: true
+      
+      - name: PR size check
+        run: |
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          echo "Changed files: $CHANGED_FILES"
+          if [ $CHANGED_FILES -gt 50 ]; then
+            echo "⚠️ Warning: This PR changes $CHANGED_FILES files. Consider breaking it into smaller PRs."
+          fi
+      
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const body = status === 'success' 
+              ? '✅ All checks passed! This PR is ready for review.'
+              : '❌ Some checks failed. Please review the logs above.';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

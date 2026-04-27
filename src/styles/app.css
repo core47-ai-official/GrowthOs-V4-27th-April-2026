@@ -1,0 +1,51 @@
+/* Friendly UI polish utilities (theme-aware) */
+.section-surface {
+  background: linear-gradient(180deg, hsl(var(--card)), hsl(var(--muted) / 0.5));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.75rem; /* ~rounded-xl */
+  box-shadow: var(--shadow-soft);
+}
+
+.section-header {
+  background: linear-gradient(90deg, hsl(var(--primary) / 0.06), transparent);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.header-accent {
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(224 71% 52%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.icon-chip {
+  width: 2rem; /* 8 */
+  height: 2rem; /* 8 */
+  border-radius: 0.5rem; /* rounded-lg */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--primary) / 0.10);
+  color: hsl(var(--primary));
+}
+
+.table-row-hover {
+  transition: background-color 160ms ease;
+}
+.table-row-hover:hover {
+  background: hsl(var(--muted) / 0.25);
+}
+
+/* Soft badge utilities (theme tokens) */
+.badge-pill {
+  border-radius: 9999px;
+  padding: 0.25rem 0.625rem; /* py-1 px-2.5 */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.badge-soft-primary { background: hsl(var(--primary) / 0.12); color: hsl(var(--primary)); border-color: hsl(var(--primary) / 0.22); }
+.badge-soft-destructive { background: hsl(var(--destructive) / 0.12); color: hsl(var(--destructive)); border-color: hsl(var(--destructive) / 0.22); }
+.badge-soft-success { background: hsl(var(--success) / 0.12); color: hsl(var(--success)); border-color: hsl(var(--success) / 0.22); }
+.badge-soft-warning { background: hsl(var(--warning) / 0.12); color: hsl(var(--warning)); border-color: hsl(var(--warning) / 0.22); }
+.badge-soft-muted { background: hsl(var(--muted) / 0.6); color: hsl(var(--muted-foreground)); border-color: hsl(var(--border)); }
