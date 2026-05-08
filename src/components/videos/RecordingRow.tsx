@@ -23,89 +23,111 @@ export const RecordingRow: React.FC<RecordingRowProps> = ({
 
   return (
     <div
-      className={`flex items-center gap-2 sm:gap-3 p-2.5 sm:p-4 rounded-lg border transition-all ${
+      className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 rounded-lg border transition-all gap-3 ${
         isActive
           ? 'bg-card border-border hover:border-primary/30 hover:shadow-sm'
           : 'bg-muted/30 border-muted'
       }`}
     >
-      {/* Number */}
-      <div className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted text-xs sm:text-sm font-medium shrink-0">
-        {index + 1}
-      </div>
+      <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+        <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-muted text-xs sm:text-sm font-medium shrink-0">
+          {index + 1}
+        </div>
 
-      {/* Status icon */}
-      <div className="shrink-0">
-        {isActive ? (
-          recording.isWatched ? (
-            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+        <div className="shrink-0">
+          {isActive ? (
+            recording.isWatched ? (
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+            ) : (
+              <Play className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            )
           ) : (
-            <Play className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-          )
-        ) : (
-          <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <h4 className={`font-medium text-sm sm:text-base truncate ${!isActive ? 'text-muted-foreground' : ''}`}>
-          {recording.recording_title}
-        </h4>
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-xs text-muted-foreground mt-0.5">
-          {recording.duration_min && (
-            <span className="flex items-center gap-1 shrink-0">
-              <Clock className="w-3 h-3" />
-              {recording.duration_min} min
-            </span>
-          )}
-          {recording.isWatched && (
-            <span className="text-green-600 font-medium">✓ Done</span>
-          )}
-          {recording.hasAssignment && recording.assignmentSubmitted && (
-            <span className="text-blue-600 font-medium">✓ Submitted</span>
+            <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
           )}
         </div>
-        {userLMSStatus !== 'active' && (
-          <span className="text-orange-600 font-medium text-xs mt-0.5 block">
-            Clear your fees to access
-          </span>
-        )}
-        {userLMSStatus === 'active' && !recording.isUnlocked && (
-          <span className="text-orange-600 font-medium text-xs mt-0.5 block">
-            {recording.lockReason === 'previous_lesson_not_watched' && 'Watch the previous lesson first'}
-            {recording.lockReason === 'previous_assignment_not_submitted' && 'Submit your assignment to continue'}
-            {recording.lockReason === 'previous_assignment_not_approved' && 'Waiting for review'}
-            {recording.lockReason === 'drip_locked' && recording.dripUnlockDate &&
-              `Unlocks ${new Date(recording.dripUnlockDate).toLocaleDateString()}`
-            }
-            {recording.lockReason === 'fees_not_cleared' && 'Clear fees to unlock'}
-            {!recording.lockReason && 'Complete previous lessons'}
-          </span>
-        )}
+
+        <div className="flex-1 min-w-0">
+          <h4 className={`font-medium text-sm sm:text-base truncate ${!isActive ? 'text-muted-foreground' : ''}`}>
+            {recording.recording_title}
+          </h4>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-muted-foreground mt-1">
+            {recording.duration_min && (
+              <span className="flex items-center gap-1 shrink-0">
+                <Clock className="w-3 h-3" />
+                {recording.duration_min} min
+              </span>
+            )}
+            {recording.hasAssignment && (
+              <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300 text-xs shrink-0">
+                <BookOpen className="w-3 h-3 mr-1" />
+                Assignment
+              </Badge>
+            )}
+          </div>
+          {userLMSStatus !== 'active' && (
+            <span className="text-orange-600 font-medium text-xs mt-1 block">
+              Please clear your fees to access content
+            </span>
+          )}
+          {userLMSStatus === 'active' && !recording.isUnlocked && (
+            <span className="text-orange-600 font-medium text-xs mt-1 block">
+              {recording.lockReason === 'previous_lesson_not_watched' && 'Complete previous lesson to unlock'}
+              {recording.lockReason === 'previous_assignment_not_submitted' && 'Submit previous assignment to unlock'}
+              {recording.lockReason === 'previous_assignment_not_approved' && 'Previous assignment pending approval'}
+              {recording.lockReason === 'drip_locked' && recording.dripUnlockDate &&
+                `Unlocks on ${new Date(recording.dripUnlockDate).toLocaleDateString()}`
+              }
+              {recording.lockReason === 'fees_not_cleared' && 'Not started yet'}
+              {recording.lockReason === 'not_started_yet' && 'Not started yet'}
+              {!recording.lockReason && 'Complete previous lessons to unlock'}
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Action button - compact */}
-      <div className="shrink-0 flex items-center gap-1.5">
+      <div className="flex items-center gap-2 flex-wrap justify-end sm:justify-start shrink-0 ml-10 sm:ml-0">
+        {recording.isWatched && (
+          <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300 text-xs">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Completed
+          </Badge>
+        )}
+
+        {recording.hasAssignment && recording.assignmentSubmitted && (
+          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">
+            <Clock className="w-3 h-3 mr-1" />
+            Submitted
+          </Badge>
+        )}
+
         {recording.hasAssignment && recording.isUnlocked && userLMSStatus === 'active' && (
           <Button
-            variant="ghost"
-            size="icon"
+            variant="outline"
+            size="sm"
             onClick={() => navigate(`/assignments?assignmentId=${recording.assignmentId}`)}
-            className="h-8 w-8"
+            className="text-xs h-8"
           >
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+            <span className="hidden sm:inline">Assignment</span>
           </Button>
         )}
 
         <Button
-          variant={recording.isWatched ? "ghost" : "default"}
-          size="icon"
+          variant={recording.isWatched ? "outline" : "default"}
+          size="sm"
           disabled={userLMSStatus !== 'active' || !recording.isUnlocked || !recording.recording_url}
           onClick={() => onWatch(recording)}
-          className={`h-8 w-8 ${!isActive ? 'opacity-50' : ''}`}
+          className={`text-xs h-8 ${!isActive ? 'opacity-50' : ''}`}
         >
-          <Play className="w-4 h-4" />
+          <Play className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-1" />
+          <span className="hidden sm:inline">
+            {userLMSStatus !== 'active'
+              ? 'Clear Fees'
+              : recording.isUnlocked
+                ? (recording.isWatched ? 'Rewatch' : 'Watch Now')
+                : 'Locked'
+            }
+          </span>
         </Button>
       </div>
     </div>
