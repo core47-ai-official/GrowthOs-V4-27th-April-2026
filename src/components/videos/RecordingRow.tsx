@@ -75,7 +75,7 @@ export const RecordingRow: React.FC<RecordingRowProps> = ({
               {recording.lockReason === 'previous_assignment_not_submitted' && 'Submit previous assignment to unlock'}
               {recording.lockReason === 'previous_assignment_not_approved' && 'Previous assignment pending approval'}
               {recording.lockReason === 'drip_locked' && recording.dripUnlockDate &&
-                `Unlocks on ${new Date(recording.dripUnlockDate).toLocaleDateString()}`
+                `Unlocks on ${new Date(recording.dripUnlockDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}`
               }
               {recording.lockReason === 'fees_not_cleared' && 'Not started yet'}
               {recording.lockReason === 'not_started_yet' && 'Not started yet'}
